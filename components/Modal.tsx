@@ -13,7 +13,7 @@ export default function Modal({
   images: ImageProps[];
   onClose?: () => void;
 }) {
-  let overlayRef = useRef();
+  let overlayRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   const { photoId } = router.query;
@@ -24,7 +24,7 @@ export default function Modal({
 
   function handleClose() {
     router.push("/", undefined, { shallow: true });
-    onClose();
+    onClose?.();
   }
 
   function changePhotoId(newVal: number) {
@@ -63,10 +63,10 @@ export default function Modal({
       initialFocus={overlayRef}
       className="fixed inset-0 z-10 flex items-center justify-center"
     >
-      <Dialog.Overlay
+      <motion.div
         ref={overlayRef}
-        as={motion.div}
         key="backdrop"
+        aria-hidden="true"
         className="fixed inset-0 z-30 bg-black/70 backdrop-blur-2xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

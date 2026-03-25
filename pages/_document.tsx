@@ -23,7 +23,51 @@ class MyDocument extends Document {
             content="See pictures from Next.js Conf and the After Party."
           />
         </Head>
-        <body className="bg-black antialiased">
+        <body className="bg-black antialiased" suppressHydrationWarning>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(() => {
+  const attr = "bis_skin_checked";
+  const selector = "[" + attr + "]";
+
+  const scrub = (root) => {
+    if (!root || !root.querySelectorAll) return;
+    if (root.hasAttribute && root.hasAttribute(attr)) {
+      root.removeAttribute(attr);
+    }
+    root.querySelectorAll(selector).forEach((el) => el.removeAttribute(attr));
+  };
+
+  scrub(document.documentElement);
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === "attributes" && mutation.attributeName === attr) {
+        mutation.target.removeAttribute(attr);
+      }
+      if (mutation.type === "childList") {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            scrub(node);
+          }
+        });
+      }
+    }
+  });
+
+  observer.observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: [attr],
+  });
+
+  window.addEventListener("load", () => {
+    setTimeout(() => observer.disconnect(), 3000);
+  });
+})();`,
+            }}
+          />
           <Main />
           <NextScript />
         </body>
