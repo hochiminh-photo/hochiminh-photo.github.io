@@ -18,6 +18,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hooks-global-state": "^2.1.0",
+    "react-medium-image-zoom": "^5.4.1",
     "react-swipeable": "^7.0.2",
     "react-use-keypress": "^1.4.0"
   },

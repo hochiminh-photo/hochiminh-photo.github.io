@@ -9,6 +9,7 @@ import {
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import Zoom from "react-medium-image-zoom";
 import { useSwipeable } from "react-swipeable";
 import { variants } from "../utils/animationVariants";
 import downloadPhoto from "../utils/downloadPhoto";
@@ -46,6 +47,8 @@ export default function SharedModal({
   });
 
   let currentImage = images ? images[index] : currentPhoto;
+  const currentImageWidth = Number(currentImage.width) || 1920;
+  const currentImageHeight = Number(currentImage.height) || 1280;
 
   return (
     <MotionConfig
@@ -55,12 +58,12 @@ export default function SharedModal({
       }}
     >
       <div
-        className="relative z-50 flex aspect-[3/2] w-full max-w-7xl items-center wide:h-full xl:taller-than-854:h-auto"
+        className="relative z-50 flex h-screen w-full max-w-7xl items-center justify-center px-2"
         {...handlers}
       >
         {/* Main image */}
-        <div className="w-full overflow-hidden">
-          <div className="relative flex aspect-[3/2] items-center justify-center">
+        <div className="flex h-screen w-full items-center justify-center overflow-hidden">
+          <div className="relative flex h-screen w-full items-center justify-center">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={index}
@@ -69,20 +72,23 @@ export default function SharedModal({
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute"
+                className="absolute flex h-screen w-full items-center justify-center"
               >
-                <Image
-                  src={`https://res.cloudinary.com/${
-                    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-                  }/image/upload/c_scale,${navigation ? "w_1280" : "w_1920"}/${
-                    currentImage.public_id
-                  }.${currentImage.format}`}
-                  width={navigation ? 1280 : 1920}
-                  height={navigation ? 853 : 1280}
-                  priority
-                  alt="Ho Chi Minh AI Image"
-                  onLoad={() => setLoaded(true)}
-                />
+                <Zoom>
+                  <Image
+                    src={`https://res.cloudinary.com/${
+                      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+                    }/image/upload/c_scale,${navigation ? "w_1280" : "w_1920"}/${
+                      currentImage.public_id
+                    }.${currentImage.format}`}
+                    width={currentImageWidth}
+                    height={currentImageHeight}
+                    priority
+                    alt="Ho Chi Minh AI Image"
+                    className="h-screen w-auto max-w-full object-contain"
+                    onLoad={() => setLoaded(true)}
+                  />
+                </Zoom>
               </motion.div>
             </AnimatePresence>
           </div>
