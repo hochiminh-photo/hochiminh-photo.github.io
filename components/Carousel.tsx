@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useKeypress from "react-use-keypress";
+import { getCloudinaryBlurUrl } from "../utils/photosManifest";
 import type { ImageProps } from "../utils/types";
 import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
 import SharedModal from "./SharedModal";
@@ -35,7 +36,7 @@ export default function Carousel({
         onClick={closeModal}
       >
         <Image
-          src={currentPhoto.blurDataUrl}
+          src={getCloudinaryBlurUrl(currentPhoto)}
           className="pointer-events-none h-full w-full"
           alt="blurred background"
           fill

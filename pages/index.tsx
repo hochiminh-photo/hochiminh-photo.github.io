@@ -3,21 +3,44 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
-import Bridge from "../components/Icons/Bridge";
+import { useEffect, useRef, useState } from "react";
 import Logo from "../components/Icons/Logo";
 import Modal from "../components/Modal";
-import cloudinary from "../utils/cloudinary";
-import getBase64ImageUrl from "../utils/generateBlurPlaceholder";
+import { getCloudinaryBlurUrl, loadPhotosManifest } from "../utils/photosManifest";
 import type { ImageProps } from "../utils/types";
 import { useLastViewedPhoto } from "../utils/useLastViewedPhoto";
 
-const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
+const Home: NextPage = () => {
   const router = useRouter();
   const { photoId } = router.query;
   const [lastViewedPhoto, setLastViewedPhoto] = useLastViewedPhoto();
+  const [images, setImages] = useState<ImageProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const lastViewedPhotoRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      try {
+        const manifestImages = await loadPhotosManifest();
+        if (isMounted) {
+          setImages(manifestImages);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     // This effect keeps track of the last viewed photo in the modal to keep the index page in sync when the user navigates back
@@ -41,7 +64,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
         />
       </Head>
       <main className="mx-auto max-w-[1960px] p-4">
-        {photoId && (
+        {photoId && images.length > 0 && (
           <Modal
             images={images}
             onClose={() => {
@@ -70,8 +93,11 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
               Clone and Deploy
             </a> */}
           </div>
+        {isLoading && (
+          <div className="my-16 text-center text-white/70">Loading photos...</div>
+        )}
+
         <div className="columns-1 gap-4 sm:columns-2 xl:columns-3 2xl:columns-4">
-          
           {images.map(({ id, public_id, format, blurDataUrl }) => (
             <Link
               key={id}
@@ -86,7 +112,7 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
                 className="transform rounded-lg brightness-90 transition will-change-auto group-hover:brightness-110"
                 style={{ transform: "translate3d(0, 0, 0)" }}
                 placeholder="blur"
-                blurDataURL={blurDataUrl}
+                blurDataURL={blurDataUrl || getCloudinaryBlurUrl({ public_id, format })}
                 src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${public_id}.${format}`}
                 width={720}
                 height={480}
@@ -126,39 +152,3 @@ const Home: NextPage = ({ images }: { images: ImageProps[] }) => {
 };
 
 export default Home;
-
-export async function getStaticProps() {
-  const results = await cloudinary.v2.search
-    .expression(`folder:${process.env.CLOUDINARY_FOLDER}/*`)
-    .sort_by("public_id", "desc")
-    .max_results(400)
-    .execute();
-  let reducedResults: ImageProps[] = [];
-
-  let i = 0;
-  for (let result of results.resources) {
-    reducedResults.push({
-      id: i,
-      height: result.height,
-      width: result.width,
-      public_id: result.public_id,
-      format: result.format,
-    });
-    i++;
-  }
-
-  const blurImagePromises = results.resources.map((image: ImageProps) => {
-    return getBase64ImageUrl(image);
-  });
-  const imagesWithBlurDataUrls = await Promise.all(blurImagePromises);
-
-  for (let i = 0; i < reducedResults.length; i++) {
-    reducedResults[i].blurDataUrl = imagesWithBlurDataUrls[i];
-  }
-
-  return {
-    props: {
-      images: reducedResults,
-    },
-  };
-}

@@ -1,31 +1,58 @@
-# Next.js & Cloudinary example app
+# Ho Chi Minh Photo Gallery
 
-This example shows how to create an image gallery site using Next.js, [Cloudinary](https://cloudinary.com), and [Tailwind](https://tailwindcss.com).
+This project now uses a static-export + client-side data model so it can be deployed to Cloudflare Pages.
 
-## Deploy your own
+## Architecture
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or view the demo [here](https://nextconf-images.vercel.app/)
+- Next.js static export (output in out/)
+- Client-side photo loading from public/photos-manifest.json
+- Build-time manifest generation from Cloudinary (scripts/generate-photos-manifest.mjs)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-cloudinary&project-name=nextjs-image-gallery&repository-name=with-cloudinary&env=NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,CLOUDINARY_API_KEY,CLOUDINARY_API_SECRET,CLOUDINARY_FOLDER&envDescription=API%20Keys%20from%20Cloudinary%20needed%20to%20run%20this%20application.)
+At runtime, Cloudflare only serves static files. No Next.js server is required.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Local development
 
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-cloudinary with-cloudinary-app
-```
+1. Install dependencies:
 
 ```bash
-yarn create next-app --example with-cloudinary with-cloudinary-app
+npm install
 ```
+
+2. Start dev server:
 
 ```bash
-pnpm create next-app --example with-cloudinary with-cloudinary-app
+npm run dev
 ```
 
-## References
+3. Build static output:
 
-- Cloudinary API: https://cloudinary.com/documentation/transformation_reference
+```bash
+npm run build
+```
+
+## Required environment variables
+
+Set these in your local .env.local and in Cloudflare Pages project settings:
+
+- NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+- CLOUDINARY_API_KEY
+- CLOUDINARY_API_SECRET
+- CLOUDINARY_FOLDER
+
+Notes:
+
+- NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is public and used in browser image URLs.
+- CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET / CLOUDINARY_FOLDER are used only at build time to generate public/photos-manifest.json.
+
+If build-time Cloudinary env vars are missing, the prebuild script writes an empty manifest.
+
+## Cloudflare Pages deployment
+
+Use these settings in Cloudflare Pages:
+
+- Framework preset: Next.js (or None)
+- Build command: npm run build
+- Build output directory: out
+- Node.js version: 20+
+
+Because this project exports static files, Cloudflare Pages can serve it directly from out/.

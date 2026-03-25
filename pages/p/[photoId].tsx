@@ -1,18 +1,51 @@
-import type { GetStaticProps, NextPage } from "next";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
 import Carousel from "../../components/Carousel";
-import getResults from "../../utils/cachedImages";
-import cloudinary from "../../utils/cloudinary";
-import getBase64ImageUrl from "../../utils/generateBlurPlaceholder";
+import { loadPhotosManifest } from "../../utils/photosManifest";
 import type { ImageProps } from "../../utils/types";
 
-const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
+const Home: NextPage = () => {
   const router = useRouter();
   const { photoId } = router.query;
-  let index = Number(photoId);
+  const [images, setImages] = useState<ImageProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const currentPhotoUrl = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${currentPhoto.public_id}.${currentPhoto.format}`;
+  const index = useMemo(() => Number(photoId), [photoId]);
+  const currentPhoto = useMemo(
+    () => images.find((img) => img.id === index),
+    [images, index],
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      try {
+        const manifestImages = await loadPhotosManifest();
+        if (isMounted) {
+          setImages(manifestImages);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const currentPhotoUrl = currentPhoto
+    ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${currentPhoto.public_id}.${currentPhoto.format}`
+    : "https://hochiminh-ai.vercel.app/og-image.png";
 
   return (
     <>
@@ -22,7 +55,11 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
         <meta name="twitter:image" content={currentPhotoUrl} />
       </Head>
       <main className="mx-auto max-w-[1960px] p-4">
-        <Carousel currentPhoto={currentPhoto} index={index} />
+        {isLoading && <div className="text-center text-white/70">Loading photo...</div>}
+        {!isLoading && currentPhoto && <Carousel currentPhoto={currentPhoto} index={index} />}
+        {!isLoading && !currentPhoto && (
+          <div className="text-center text-white/70">Photo not found.</div>
+        )}
       </main>
     </>
   );
@@ -30,48 +67,25 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
 
 export default Home;
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const results = await getResults();
-
-  let reducedResults: ImageProps[] = [];
-  let i = 0;
-  for (let result of results.resources) {
-    reducedResults.push({
-      id: i,
-      height: result.height,
-      width: result.width,
-      public_id: result.public_id,
-      format: result.format,
-    });
-    i++;
-  }
-
-  const currentPhoto = reducedResults.find(
-    (img) => img.id === Number(context.params.photoId),
-  );
-  currentPhoto.blurDataUrl = await getBase64ImageUrl(currentPhoto);
-
+export const getStaticProps: GetStaticProps = async () => {
   return {
-    props: {
-      currentPhoto: currentPhoto,
-    },
+    props: {},
   };
 };
 
-export async function getStaticPaths() {
-  const results = await cloudinary.v2.search
-    .expression(`folder:${process.env.CLOUDINARY_FOLDER}/*`)
-    .sort_by("public_id", "desc")
-    .max_results(400)
-    .execute();
+export const getStaticPaths: GetStaticPaths = async () => {
+  const manifestPath = path.join(process.cwd(), "public", "photos-manifest.json");
 
-  let fullPaths = [];
-  for (let i = 0; i < results.resources.length; i++) {
-    fullPaths.push({ params: { photoId: i.toString() } });
+  let images: ImageProps[] = [];
+  try {
+    const fileContent = await readFile(manifestPath, "utf8");
+    images = JSON.parse(fileContent) as ImageProps[];
+  } catch {
+    images = [];
   }
 
   return {
-    paths: fullPaths,
+    paths: images.map((_, i) => ({ params: { photoId: i.toString() } })),
     fallback: false,
   };
-}
+};

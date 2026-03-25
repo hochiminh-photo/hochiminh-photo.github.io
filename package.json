@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-photos-manifest.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
@@ -12,8 +13,6 @@
     "cloudinary": "^2.9.0",
     "eslint-config-next": "^16.2.1",
     "framer-motion": "^12.38.0",
-    "imagemin": "^9.0.1",
-    "imagemin-jpegtran": "^8.0.0",
     "next": "latest",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
