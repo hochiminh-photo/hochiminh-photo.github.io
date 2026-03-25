@@ -8,19 +8,19 @@ class MyDocument extends Document {
           <link rel="icon" href="/favicon.ico" />
           <meta
             name="description"
-            content="See pictures from Next.js Conf and the After Party."
+            content="Chủ tịch Hồ Chí Minh - Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại."
           />
           <meta property="og:site_name" content="nextjsconf-pics.vercel.app" />
           <meta
             property="og:description"
-            content="See pictures from Next.js Conf and the After Party."
+            content="Chủ tịch Hồ Chí Minh - Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại."
           />
-          <meta property="og:title" content="Next.js Conf 2022 Pictures" />
+          <meta property="og:title" content="Chủ tịch Hồ Chí Minh - Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại." />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Next.js Conf 2022 Pictures" />
+          <meta name="twitter:title" content="Chủ tịch Hồ Chí Minh - Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại." />
           <meta
             name="twitter:description"
-            content="See pictures from Next.js Conf and the After Party."
+            content="Chủ tịch Hồ Chí Minh - Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại."
           />
         </Head>
         <body className="bg-black antialiased" suppressHydrationWarning>
