@@ -68,7 +68,7 @@ export default function SharedModal({
           <div className="absolute left-0 top-0 p-3 text-white">
             <button
               onClick={closeModal}
-              className="pointer-events-auto rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
+              className="pointer-events-auto rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white cursor-pointer"
               title="Close"
               aria-label="Close image"
             >
@@ -78,7 +78,7 @@ export default function SharedModal({
           <div className="absolute right-0 top-0 p-3 text-white">
             <a
               href={tweetHref}
-              className="pointer-events-auto rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white"
+              className="pointer-events-auto rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white cursor-pointer"
               target="_blank"
               title="Share this photo"
               rel="noreferrer"
