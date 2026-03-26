@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
@@ -59,32 +58,28 @@ const ImageCompareSlider = ({
   );
 
   return (
-    <section className="w-full">
+    <section className="flex w-full justify-center">
       <div
         ref={containerRef}
-        className="relative aspect-4/3 w-full cursor-ew-resize overflow-hidden rounded-2xl border border-white/20 bg-black/30 shadow-highlight"
+        className="relative w-fit max-w-full cursor-ew-resize overflow-hidden rounded-2xl border border-white/20 bg-black/30 shadow-highlight touch-none"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        <Image
+        <img
           src={beforeImageSrc}
           alt={`${beforeLabel} image`}
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 900px"
+          className="block h-svh w-auto max-w-full object-contain select-none"
+          draggable={false}
         />
 
         <div className="absolute inset-0" style={{ clipPath }}>
-          <Image
+          <img
             src={afterImageSrc}
             alt={`${afterLabel} image`}
-            fill
-            priority
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 900px"
+            className="h-full w-full object-contain select-none"
+            draggable={false}
           />
         </div>
 
