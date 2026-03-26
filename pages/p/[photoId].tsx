@@ -9,7 +9,7 @@ const Home: NextPage<{ currentPhoto: ImageProps | null }> = ({ currentPhoto }) =
 
   const currentPhotoUrl = currentPhoto
     ? currentPhoto.src
-    : "https://hochiminh-ai.vercel.app/og-image.png";
+    : "https://hochiminh-ai.pages.dev/og-image.png";
 
   return (
     <>
