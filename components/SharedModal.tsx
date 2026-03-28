@@ -7,6 +7,7 @@ import ImageCompareSlider from "./ImageCompareSlider";
 import { variants } from "../utils/animationVariants";
 import type { SharedModalProps } from "../utils/types";
 import Twitter from "./Icons/Twitter";
+import Facebook from "./Icons/Facebook";
 
 export default function SharedModal({
     index,
@@ -32,6 +33,11 @@ export default function SharedModal({
         encodeURIComponent("Check out this pic from Ho Chi Minh AI Enhance Photo Gallery!") +
         "%0A%0A" +
         encodeURIComponent(shareUrl);
+    const facebookHref =
+        "https://www.facebook.com/sharer/sharer.php?u=" +
+        encodeURIComponent(shareUrl) +
+        "&quote=" +
+        encodeURIComponent("Check out this pic from Ho Chi Minh AI Enhance Photo Gallery!");
 
     return (
         <MotionConfig
@@ -40,9 +46,9 @@ export default function SharedModal({
                 opacity: { duration: 0.2 },
             }}
         >
-            <div className="relative z-50 flex h-screen w-full max-w-7xl items-center justify-center px-2">
+            <div className="relative z-50 flex min-h-dvh w-full max-w-7xl items-center justify-center px-2 sm:px-4">
                 {isCompareMode ? (
-                    <div className="flex h-screen w-full items-center justify-center">
+                    <div className="flex min-h-dvh w-full items-center justify-center py-14 sm:py-16">
                         <div className="w-full max-w-6xl">
                             <ImageCompareSlider
                                 beforeImageSrc={blackWhiteSrc}
@@ -53,7 +59,7 @@ export default function SharedModal({
                         </div>
                     </div>
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center overflow-hidden">
+                    <div className="flex min-h-dvh w-full items-center justify-center overflow-hidden py-14 sm:py-16">
                         <div className="relative flex h-full w-full items-center justify-center">
                             <AnimatePresence initial={false} custom={direction}>
                                 <motion.div
@@ -73,7 +79,7 @@ export default function SharedModal({
                                             height={currentImageHeight}
                                             priority
                                             alt="Ho Chi Minh AI Image"
-                                            className="h-screen w-auto max-w-full object-contain"
+                                            className="h-auto max-h-[calc(100dvh-8rem)] w-auto max-w-full object-contain sm:max-h-[calc(100dvh-9rem)]"
                                         />
                                     </Zoom>
                                 </motion.div>
@@ -82,11 +88,11 @@ export default function SharedModal({
                     </div>
                 )}
 
-                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute left-0 top-0 flex items-center gap-2 p-3 text-white">
+                <div className="pointer-events-none fixed inset-x-0 top-0 z-80 flex items-start justify-between p-2 text-white sm:p-3" style={{ paddingTop: "max(env(safe-area-inset-top), 0.75rem)" }}>
+                    <div className="flex items-center gap-2">
                         <button
                             onClick={() => setIsCompareMode((prev) => !prev)}
-                            className="pointer-events-auto rounded-full bg-black/50 px-3 py-2 text-xs font-semibold border border-white/70 text-white/85 backdrop-blur-lg transition hover:bg-black/75 hover:text-white cursor-pointer"
+                            className="pointer-events-auto rounded-full border border-white/80 bg-black/70 px-2.5 py-1.5 text-[11px] font-semibold text-white/95 backdrop-blur-lg transition hover:bg-black/85 hover:text-white cursor-pointer sm:px-3 sm:py-2 sm:text-xs"
                             title={isCompareMode ? "Show single image" : "Compare black-white and colorized"}
                             aria-label={isCompareMode ? "Show single image" : "Compare black-white and colorized"}
                         >
@@ -94,25 +100,35 @@ export default function SharedModal({
                         </button>
                         <a
                             href={tweetHref}
-                            className="pointer-events-auto rounded-full bg-black/50 p-2 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white cursor-pointer"
+                            className="pointer-events-auto rounded-full border border-white/60 bg-black/70 p-1.5 text-white/90 backdrop-blur-lg transition hover:bg-black/85 hover:text-white cursor-pointer sm:p-2"
                             target="_blank"
-                            title="Share this photo"
+                            title="Share on Twitter"
                             rel="noreferrer"
+                            aria-label="Share on Twitter"
                         >
-                            <Twitter className="h-5 w-5" />
+                            <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
+                        </a>
+                        <a
+                            href={facebookHref}
+                            className="pointer-events-auto rounded-full border border-white/60 bg-black/70 p-1.5 text-white/90 backdrop-blur-lg transition hover:bg-black/85 hover:text-white cursor-pointer sm:p-2"
+                            target="_blank"
+                            title="Share on Facebook"
+                            rel="noreferrer"
+                            aria-label="Share on Facebook"
+                        >
+                            <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
                         </a>
                     </div>
-                    <div className="absolute right-0 top-0 p-3 text-white">
+                    <div className="text-white">
                         <button
                             onClick={closeModal}
-                            className="pointer-events-auto rounded-full bg-black/50 p-2  text-white/75 backdrop-blur-lg transition hover:bg-white/55 hover:border-2 hover:text-white cursor-pointer"
+                            className="pointer-events-auto rounded-full border border-white/60 bg-black/70 p-1.5 text-white/90 backdrop-blur-lg transition hover:bg-black/85 hover:text-white cursor-pointer sm:p-2"
                             title="Close"
                             aria-label="Close image"
                         >
-                            <XMarkIcon className="h-5 w-5" />
+                            <XMarkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </button>
                     </div>
-
                 </div>
             </div>
         </MotionConfig>
