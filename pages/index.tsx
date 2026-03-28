@@ -67,6 +67,12 @@ const Home: NextPage<{ images: ImageProps[] }> = ({ images }) => {
             <p className="max-w-[60ch] text-white/75 sm:max-w-[40ch]">
               Tấm gương rạng ngời dân tộc, sự kết hợp giữa khôn khéo chiến lược và đạo đức bền vững qua nhiều thập kỷ thử thách là minh chứng cho tài năng mọi thời đại.
             </p>
+            <Link
+              href="/hochiminh"
+              className="z-10 mt-2 rounded-lg border border-white/70 px-3 py-2 text-sm font-semibold transition hover:bg-white hover:text-black"
+            >
+              View Stacked Photos
+            </Link>
             {/* <a
               className="pointer z-10 mt-6 rounded-lg border border-white bg-white px-3 py-2 text-sm font-semibold text-black transition hover:bg-white/10 hover:text-white md:mt-4"
               target="_blank"
